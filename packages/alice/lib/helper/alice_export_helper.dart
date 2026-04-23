@@ -39,10 +39,16 @@ class AliceExportHelper {
       );
     }
 
+    final box = context.findRenderObject() as RenderBox?;
+
     await SharePlus.instance.share(
       ShareParams(
         text: callLog,
         subject: context.i18n(AliceTranslationKey.emailSubject),
+        sharePositionOrigin:
+            box != null && box.hasSize
+                ? box.localToGlobal(Offset.zero) & box.size
+                : const Rect.fromLTWH(0, 0, 1, 1),
       ),
     );
 
@@ -173,6 +179,16 @@ class AliceExportHelper {
     }
 
     stringBuffer.writeAll([
+      '--------------------------------------------\n',
+      '${context.i18n(AliceTranslationKey.saveLogCurl)}\n',
+      '--------------------------------------------\n',
+      Curl.getCurlCommand(call),
+      '\n',
+      '==============================================\n',
+      '\n',
+    ]);
+
+    stringBuffer.writeAll([
       '${context.i18n(AliceTranslationKey.saveLogRequestSize)} ${AliceConversionHelper.formatBytes(call.request?.size ?? 0)}\n',
       '${context.i18n(AliceTranslationKey.saveLogRequestBody)} ${AliceParser.formatBody(context: context, body: call.request?.body, contentType: call.request?.contentType)}\n',
       '--------------------------------------------\n',
@@ -199,16 +215,6 @@ class AliceExportHelper {
         );
       }
     }
-
-    stringBuffer.writeAll([
-      '--------------------------------------------\n',
-      '${context.i18n(AliceTranslationKey.saveLogCurl)}\n',
-      '--------------------------------------------\n',
-      Curl.getCurlCommand(call),
-      '\n',
-      '==============================================\n',
-      '\n',
-    ]);
 
     return stringBuffer.toString();
   }
