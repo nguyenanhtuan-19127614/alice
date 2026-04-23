@@ -15,7 +15,10 @@ environment:
   flutter: ">=3.29.0"
 
 dependencies:
-  alice: ^1.0.0
+  alice:
+    git:
+      url: https://github.com/nguyenanhtuan-19127614/alice.git
+      path: packages/alice
   dio: ^5.8.0+1
   flutter:
     sdk: flutter
